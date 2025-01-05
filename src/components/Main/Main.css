@@ -1,0 +1,21 @@
+main {
+  width: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.arrow {
+  width: 5%;
+  cursor: pointer;
+}
+
+.slider-wrapper {
+  width: 85%;
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  perspective: 1000px;
+  overflow: hidden;
+}
