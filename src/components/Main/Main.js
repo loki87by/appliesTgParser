@@ -1,56 +1,91 @@
 import React, { useState } from "react";
 import Slider from "../Slider/Slider";
-import left from "../../assets/left.svg";
-import right from "../../assets/right.svg";
+import Arrow from "../Arrow/Arrow";
 import "./Main.css";
 
 function Main(props) {
   const [direction, setDirection] = useState(0);
-  const [position, setPosition] = useState(0); //need upd
   const [clicked, setClicked] = useState([]);
+  const [isHovered, setIsHovered] = useState(false);
+  const [clickedDirection, setClickedDirection] = useState("");
 
   function toLeft(event) {
     setDirection(1);
     let newPosition;
-    if (position > 0) {
-      newPosition = position - 1;
+    if (props.position > 0) {
+      newPosition = props.position - 1;
     } else if (event.ctrlKey) {
       newPosition = props.showedData.length - 1;
     }
-    if(!isNaN(newPosition)){
-    setPosition(newPosition);
-    setClicked([]);}
+    if (!isNaN(newPosition)) {
+      props.setPosition(newPosition);
+      setClicked([]);
+    }
+    setIsHovered(true);
+    setClickedDirection("");
   }
 
   function toRight(event) {
     setDirection(0);
     let newPosition;
-    if (position < props.showedData.length - 1) {
-      newPosition = position + 1;
+    if (props.position < props.showedData.length - 1) {
+      newPosition = props.position + 1;
     } else if (event.ctrlKey) {
       newPosition = 0;
     }
-    if(!isNaN(newPosition)){
-    setPosition(newPosition);
-    setClicked([]);
+    if (!isNaN(newPosition)) {
+      props.setPosition(newPosition);
+      setClicked([]);
     }
+    setIsHovered(true);
+    setClickedDirection("");
   }
 
   return (
     <main>
-      <img
-        src={left}
-        className="arrow"
-        alt="Назад"
-        onClick={(e) => toLeft(e)}
-        title={position === 0 ? 'Ctrl+click для перехода в конец' : 'Назад'}
-      />
-      <section className="slider-wrapper" >
+      <div style={{ position: "relative", width: "5%" }}>
+        <Arrow
+          dir="left"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+        />
+        <Arrow
+          dir="left"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+          index={1}
+        />
+        <Arrow
+          dir="left"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+          index={2}
+        />
+      </div>
+      <section className="slider-wrapper">
         <Slider
           shift="50"
           unit="%"
           direction={direction}
-          position={position}
+          position={props.position}
           slides={props.showedData}
           clicked={clicked}
           data={props.data}
@@ -58,19 +93,45 @@ function Main(props) {
           setData={props.setData}
         />
       </section>
-      <img
-        src={right}
-        className="arrow"
-        alt="Вперед"
-        title={position === props.showedData.length - 1 ? 'Ctrl+click для запуска сначала' : 'Вперёд'}
-        onClick={(e) => toRight(e)}
-      />
+      <div style={{ position: "relative", width: "5%" }}>
+        <Arrow
+          dir="right"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+        />
+        <Arrow
+          dir="right"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+          index={-1}
+        />
+        <Arrow
+          dir="right"
+          clickedDirection={clickedDirection}
+          setClickedDirection={setClickedDirection}
+          length={props.showedData.length}
+          position={props.position}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+          toLeft={toLeft}
+          toRight={toRight}
+          index={-2}
+        />
+      </div>
     </main>
   );
 }
 
 export default Main;
-
-/*
-
-*/

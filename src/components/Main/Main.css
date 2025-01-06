@@ -1,13 +1,9 @@
 main {
+  position: relative;
   width: 100%;
   display: flex !important;
   align-items: center;
   justify-content: space-evenly;
-}
-
-.arrow {
-  width: 5%;
-  cursor: pointer;
 }
 
 .slider-wrapper {

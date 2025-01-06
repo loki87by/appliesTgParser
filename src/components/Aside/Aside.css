@@ -1,0 +1,27 @@
+aside {
+  position: absolute;
+  z-index: 2;
+  top: 5rem;
+  left: 0;
+  width: 0;
+  padding: 2px 5px;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, .95);
+  transition: all .3s linear;
+  opacity: 0;
+}
+
+.aside_opened {
+  width: 100vw;
+  height: calc(100vh - 8rem);
+  opacity: 1;
+  overflow: auto;
+}
+
+aside > article {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+}

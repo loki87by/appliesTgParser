@@ -1,0 +1,12 @@
+.arrow {
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.5s;
+}
+
+.arrow_shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}

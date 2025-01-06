@@ -1,10 +1,7 @@
 html {
   --bg-color: #fff;
-  --front-color: #4f6801f0;
-  --t-color0: #f9f29ba3;
-  --t-color1: #df533dcf;
-  --t-color2: #e78900eb;
-  --t-color3: #309fd1fa;
+  --front-color: #ff7300;
+  --t-color0: #f9f29b;
 }
 
 body {

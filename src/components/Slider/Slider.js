@@ -74,7 +74,7 @@ function Slider(props) {
           >
             <img src={ok} alt="Отправлено" className={`null ${i.sent && "sended"}`} />
             <div className="Slider-slide-content">
-              <h3 className="Slider-slide-text">{i.company.id}</h3>
+              <h2 className="Slider-slide-text">{i.company.id}</h2>
               <img
                 src={isCopied(1) ? ok : copy}
                 alt={isCopied(1) ? "Скопировано" : "Скопировать"}
@@ -86,10 +86,10 @@ function Slider(props) {
             </div>
             <div className="Slider-slide-content">
               <div className="Slider-slide-text_content">
-                <h4 className="Slider-slide-text">Поступил новый отклик.</h4>
-                <h4 className="Slider-slide-text">{`Вакансия  -  ${i.company.vacancy}`}</h4>
-                <h4 className="Slider-slide-text">{`ФИО соискателя  -  ${i.person.name}`}</h4>
-                <h4 className="Slider-slide-text">{`Контакты для связи:  ${i.person.phone}`}</h4>
+                <h3 className="Slider-slide-text">Поступил новый отклик.</h3>
+                <h3 className="Slider-slide-text">{`Вакансия  -  ${i.company.vacancy}`}</h3>
+                <h3 className="Slider-slide-text">{`ФИО соискателя  -  ${i.person.name}`}</h3>
+                <h3 className="Slider-slide-text">{`Контакты для связи:  ${i.person.phone}`}</h3>
                 {i.person.link ? (
                   <h4 className="Slider-slide-text">{`Контакты для связи:  ${i.person.link}`}</h4>
                 ) : (
