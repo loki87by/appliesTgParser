@@ -8,33 +8,29 @@ import "../../vendor/normalize.css";
 import "./App.css";
 
 function App() {
-  const [data, setData] = useState(TMP_ARR);
+  const [data, setData] = useState([]);
   const [position, setPosition] = useState(0);
   const [showedData, setShowedData] = useState([]);
   const [asideDataLength, setAsideDataLength] = useState(NaN);
   const [socket, setSocket] = useState(null);
-  const [tick, setTick] = useState(false);
-  const [isDataSent, setDataSent] = useState(false);
   const [isAsideOpened, setAsideOpened] = useState(false);
   const [filter, setFilter] = useState("all");
-  const [delay, setDelay] = useState("5 минут");
+  const [delay, setDelay] = useState(5 * 60 * 1000);
 
   // WebSocket connect
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:5348");
-
     ws.onopen = () => {
+      console.log("ws: ", ws);
       setSocket(ws);
     };
 
     ws.onmessage = (event) => {
       const content = JSON.parse(event.data);
 
-      if (content) {
-        console.log("content: ", content);
-        if (content.data) {
-          setData(content.data);
-        }
+      if (content && content.data) {
+        console.log("Received data:", content.data);
+        setData(content.data);
       }
     };
 
@@ -50,29 +46,28 @@ function App() {
   }, []);
 
   // Функция для отправки сообщения в WebSocket
-  useEffect(() => {
-    if (socket && tick) {
-      console.log("tick: ", tick);
+  const sendMessage = () => {
+    if (socket) {
       socket.send(
-        JSON.stringify({ url: "unload/tg_server/get", params: data })
+        JSON.stringify({
+          url: "unload/tg_server/get",
+          params: { data: data, timer: delay },
+        })
       );
-      setDataSent(true);
     } else {
       console.error("WebSocket is not connected");
     }
-  }, [tick, socket, data]);
+  };
 
   // interval send data
   useEffect(() => {
-    if (tick && isDataSent) {
-      setDataSent(false);
-      setTick(false);
-      const timer = setTimeout(() => {
-        setTick(true);
-      }, delay);
-      return () => clearTimeout(timer);
-    }
-  }, [delay, isDataSent, tick]);
+    sendMessage();
+    const interval = setInterval(() => {
+      sendMessage();
+    }, delay);
+
+    return () => clearInterval(interval);
+  }, [socket, delay]);
 
   // получение индекса элемента в другом массиве
   const getIndex = (array) => {
@@ -83,7 +78,7 @@ function App() {
     let right = counter;
 
     if (!showedData || !showedData[left] || !showedData[left].uid) {
-      return 0
+      return 0;
     }
 
     while (left >= 0 || right < length) {
@@ -97,6 +92,9 @@ function App() {
       }
 
       if (right < length && right !== left) {
+        if (right >= showedData.length) {
+          return 0;
+        }
         index = array.findIndex((i) => i.uid === showedData[right].uid);
         if (index !== -1) {
           return index;
@@ -117,8 +115,11 @@ function App() {
       case "unsent":
         array = data.filter((item) => !item.sent);
         break;
+      case "break":
+        array = data.filter((item) => item.censored);
+        break;
       default:
-        array = data.slice();
+        array = data;
     }
     setPosition(getIndex(array));
     setShowedData(array);
@@ -130,9 +131,19 @@ function App() {
         return data;
       case data.filter((i) => i.sent).length:
         return data.filter((i) => i.sent);
-      default:
+      case data.filter((i) => !i.sent).length:
         return data.filter((i) => !i.sent);
+      default:
+        return data.filter((i) => i.censored);
     }
+  }
+
+  function openFromAside(index) {
+    const arr = getCurrData(asideDataLength);
+    const cur = data.findIndex((i) => i.uid === arr[index].uid);
+    setShowedData(data);
+    setPosition(cur);
+    setAsideOpened(false);
   }
 
   return (
@@ -140,6 +151,7 @@ function App() {
       <Aside
         isAsideOpened={isAsideOpened}
         data={getCurrData(asideDataLength)}
+        openFromAside={openFromAside}
       />
       <Header
         filter={filter}
@@ -161,6 +173,7 @@ function App() {
         asideDataLength={asideDataLength}
         fullCounter={data.length}
         sentCounter={data.filter((i) => i.sent).length}
+        breakCounter={data.filter((i) => i.censored).length}
         setAsideOpened={setAsideOpened}
         setAsideDataLength={setAsideDataLength}
       />

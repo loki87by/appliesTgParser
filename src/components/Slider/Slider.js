@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useClipboard } from "use-clipboard-copy";
 import copy from "../../assets/copy.svg";
 import ok from "../../assets/ok.svg";
+import email from "../../assets/email.svg";
 import "./Slider.css";
 
 function Slider(props) {
@@ -19,7 +20,8 @@ function Slider(props) {
   }
 
   function clickHandler(text, index) {
-    copyBuffer(text);
+    console.log(text);
+    copyBuffer(`${text}`);
     const array = [...props.clicked, index];
     const newSet = Array.from(new Set(array)).sort();
     props.setClicked(newSet);
@@ -27,10 +29,21 @@ function Slider(props) {
 
   function getContent(i) {
     return `Поступил новый отклик.
-    Вакансия  -  ${i.company.vacancy}
-    ФИО соискателя  -  ${i.person.name}
-    Контакты для связи:  ${i.person.phone}
-    ${i.person.link && "Контакты для связи: ".concat(i.person.link)}`;
+    Вакансия - ${i.company.vacancy}
+    ФИО соискателя - ${i.person.name}
+    Контакты для связи${
+      i.person.phone ? ": ".concat(i.person.phone) : " пользователь не оставил."
+    }
+    ${i.person.link ? "Ссылка на профиль: ".concat(i.person.link) : ""}
+    ${i.person.city ? "Город: ".concat(i.person.city) : ""}`;
+  }
+
+  function sendMail(uid) {
+    const array = props.data.slice()
+    const index = array.findIndex(i => i.uid === uid)
+    array[index].isNeedSent = true
+    array[index].sent = true
+    props.setData(array)
   }
 
   useEffect(() => {
@@ -65,21 +78,29 @@ function Slider(props) {
               props.position === 0 && ind === 0 && "Slider-slide--first"
             }`}
             style={{
+              background: `linear-gradient(${
+                i.info && i.info !== "" ? "var(--t-color1), " : ""
+              }var(--t-color0), var(--t-color${i.censored ? "2" : "0"}))`,
               transform: `rotateY(${
                 ind === props.position ? 0 : ind < props.position ? -60 : 60
               }deg) translateX(-${(props.position + ind) * props.shift}${
                 props.unit
-              }`,
+              })`,
             }}
           >
-            <img src={ok} alt="Отправлено" className={`null ${i.sent && "sended"}`} />
+            {i.info && i.info !== "" ? <h1>{i.info}</h1> : ""}
+            <img
+              src={ok}
+              alt="Отправлено"
+              className={`null ${i.sent && "sended"}`}
+            />
             <div className="Slider-slide-content">
               <h2 className="Slider-slide-text">{i.company.id}</h2>
               <img
                 src={isCopied(1) ? ok : copy}
                 alt={isCopied(1) ? "Скопировано" : "Скопировать"}
                 title={isCopied(1) ? "Скопировано" : "Скопировать"}
-                style={!isCopied(1) ? {cursor: 'pointer'}:{}}
+                style={!isCopied(1) ? { cursor: "pointer" } : {}}
                 className="Slider-slide-link"
                 onClick={() => clickHandler(i.company.id, 1)}
               />
@@ -87,11 +108,20 @@ function Slider(props) {
             <div className="Slider-slide-content">
               <div className="Slider-slide-text_content">
                 <h3 className="Slider-slide-text">Поступил новый отклик.</h3>
-                <h3 className="Slider-slide-text">{`Вакансия  -  ${i.company.vacancy}`}</h3>
-                <h3 className="Slider-slide-text">{`ФИО соискателя  -  ${i.person.name}`}</h3>
-                <h3 className="Slider-slide-text">{`Контакты для связи:  ${i.person.phone}`}</h3>
+                <h3 className="Slider-slide-text">{`Вакансия - ${i.company.vacancy}`}</h3>
+                <h3 className="Slider-slide-text">{`ФИО соискателя - ${i.person.name}`}</h3>
+                <h3 className="Slider-slide-text">{`Контакты для связи${
+                  i.person.phone
+                    ? ": ".concat(i.person.phone)
+                    : " пользователь не оставил."
+                }`}</h3>
                 {i.person.link ? (
-                  <h4 className="Slider-slide-text">{`Контакты для связи:  ${i.person.link}`}</h4>
+                  <h3 className="Slider-slide-text">{`Ссылка на профиль:  ${i.person.link}`}</h3>
+                ) : (
+                  ""
+                )}
+                {i.person.city ? (
+                  <h3 className="Slider-slide-text">{`Город:  ${i.person.city}`}</h3>
                 ) : (
                   ""
                 )}
@@ -100,11 +130,15 @@ function Slider(props) {
                 src={isCopied(2) ? ok : copy}
                 alt={isCopied(2) ? "Скопировано" : "Скопировать"}
                 title={isCopied(2) ? "Скопировано" : "Скопировать"}
-                style={!isCopied(2) ? {cursor: 'pointer'}:{}}
+                style={!isCopied(2) ? { cursor: "pointer" } : {}}
                 className="Slider-slide-link"
                 onClick={() => clickHandler(getContent(i), 2)}
               />
             </div>
+            {i.isEmail ? <div className="Slider-slide-text_content Slider-email" onClick={() => {() => sendMail(i.uid)}}>
+              <h3>{`Информация для ${i.clientContact}. нуждается в проверке. Если все ок, отправка кнопкой ниже`}</h3>
+              <img src={email} alt="" className="Slider-slide-img_button" />
+            </div> : ""}
           </div>
         );
       })}

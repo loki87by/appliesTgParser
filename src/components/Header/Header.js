@@ -22,13 +22,14 @@ function Header(props) {
         >
           <option value="all">Все</option>
           <option value="sent">Отправленные</option>
+          <option value="break">Проблемные</option>
           <option value="unsent">Неотправленные</option>
         </select>
       </section>
       <section>
         <h2>{`Частота обновления: `}</h2>
         <select
-          defaultValue={props.delay}
+          defaultValue="5 минут"
           onChange={(e) => props.setDelay(delayCorrection(e.target.value))}
         >
           <option value="1 минута">1 минута</option>

@@ -24,4 +24,5 @@ aside > article {
   align-items: center;
   justify-content: space-between;
   color: #fff;
+  cursor: pointer;
 }

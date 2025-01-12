@@ -34,6 +34,16 @@ function Footer(props) {
       >
         Осталось: <span>{props.fullCounter - props.sentCounter}</span>
       </h2>
+      <h2
+        onClick={() => {
+          if (!props.isAsideOpened || props.asideDataLength === props.breakCounter) {
+            props.setAsideOpened(!props.isAsideOpened);
+          }
+          props.setAsideDataLength(props.breakCounter);
+        }}
+      >
+        Проблемные: <span>{props.breakCounter}</span>
+      </h2>
     </footer>
   );
 }
