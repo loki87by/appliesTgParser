@@ -29,8 +29,14 @@ function App() {
       const content = JSON.parse(event.data);
 
       if (content && content.data) {
-        console.log("Received data:", content.data);
-        setData(content.data);
+        const arr = data.slice()
+        content.data.forEach(i => {
+          if (!arr.some(j => i.uid ===j.uid)) {
+            console.log("Received:", arr);
+            arr.push(i)
+          }
+        })
+        setData(arr);
       }
     };
 
@@ -51,7 +57,7 @@ function App() {
       socket.send(
         JSON.stringify({
           url: "unload/tg_server/get",
-          params: { data: data, timer: delay },
+          params: { data: data.filter(i => i.sent), timer: delay },
         })
       );
     } else {

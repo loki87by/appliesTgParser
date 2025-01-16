@@ -7,9 +7,9 @@ import "./Slider.css";
 
 function Slider(props) {
   const clipBuffer = useClipboard({
-    onSuccess() {
+    /* onSuccess() {
       console.log("Text was copied successfully!");
-    },
+    }, */
     onError() {
       alert("Что-то пошло не так, попробуйте скопировать еще раз.");
     },
@@ -20,7 +20,6 @@ function Slider(props) {
   }
 
   function clickHandler(text, index) {
-    console.log(text);
     copyBuffer(`${text}`);
     const array = [...props.clicked, index];
     const newSet = Array.from(new Set(array)).sort();
