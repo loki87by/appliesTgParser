@@ -12,11 +12,13 @@ function Main(props) {
   function toLeft(event) {
     setDirection(1);
     let newPosition;
+
     if (props.position > 0) {
       newPosition = props.position - 1;
     } else if (event.ctrlKey) {
       newPosition = props.showedData.length - 1;
     }
+
     if (!isNaN(newPosition)) {
       props.setPosition(newPosition);
       setClicked([]);
@@ -28,11 +30,13 @@ function Main(props) {
   function toRight(event) {
     setDirection(0);
     let newPosition;
+
     if (props.position < props.showedData.length - 1) {
       newPosition = props.position + 1;
     } else if (event.ctrlKey) {
       newPosition = 0;
     }
+
     if (!isNaN(newPosition)) {
       props.setPosition(newPosition);
       setClicked([]);
@@ -91,6 +95,8 @@ function Main(props) {
           data={props.data}
           setClicked={setClicked}
           setData={props.setData}
+          sendMessage={props.sendMessage}
+          setSendedObjId={props.setSendedObjId}
         />
       </section>
       <div style={{ position: "relative", width: "5%" }}>

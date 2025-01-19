@@ -7,9 +7,9 @@ import "./Slider.css";
 
 function Slider(props) {
   const clipBuffer = useClipboard({
-    /* onSuccess() {
+    onSuccess() {
       console.log("Text was copied successfully!");
-    }, */
+    },
     onError() {
       alert("Что-то пошло не так, попробуйте скопировать еще раз.");
     },
@@ -38,17 +38,19 @@ function Slider(props) {
   }
 
   function sendMail(uid) {
-    const array = props.data.slice()
-    const index = array.findIndex(i => i.uid === uid)
-    array[index].isNeedSent = true
-    array[index].sent = true
-    props.setData(array)
+    const array = props.data.slice();
+    const index = array.findIndex((i) => i.uid === uid);
+    array[index].isNeedSent = false;
+    array[index].sent = true;
+    props.setData(array);
+    props.setClicked([1, 2]);
   }
 
   useEffect(() => {
+    let current = null;
     function updateData() {
       const newData = props.data.slice();
-      const current = props.slides[props.position].uid;
+      current = props.slides[props.position].uid;
       const currIndex = newData.findIndex((i) => i.uid === current);
       newData[currIndex].sent = true;
       props.setData(newData);
@@ -56,6 +58,7 @@ function Slider(props) {
 
     if (props.clicked.length === 2) {
       updateData();
+      props.setSendedObjId(current);
       props.setClicked([...props.clicked, ""]);
     }
   }, [props]);
@@ -134,10 +137,23 @@ function Slider(props) {
                 onClick={() => clickHandler(getContent(i), 2)}
               />
             </div>
-            {i.isEmail ? <div className="Slider-slide-text_content Slider-email" onClick={() => {() => sendMail(i.uid)}}>
-              <h3>{`Информация для ${i.clientContact}. нуждается в проверке. Если все ок, отправка кнопкой ниже`}</h3>
-              <img src={email} alt="" className="Slider-slide-img_button" />
-            </div> : ""}
+            {i.isEmail && !i.sent && i.isNeedSent ? (
+              <div
+                className="Slider-slide-text_content Slider-email"
+                onClick={() => {
+                  sendMail(i.uid);
+                }}
+              >
+                <h3>{`Информация для ${i.clientContact} нуждается в проверке. Если все ок, отправка кнопкой ниже`}</h3>
+                <img
+                  src={email}
+                  alt="Отправить"
+                  className="Slider-slide-img_button"
+                />
+              </div>
+            ) : (
+              <h3>{`Надо отправить на ${i.clientContact}.`}</h3>
+            )}
           </div>
         );
       })}

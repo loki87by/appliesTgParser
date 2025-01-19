@@ -6,40 +6,40 @@ function Footer(props) {
     <footer className="Footer">
       <h2
         onClick={() => {
-          if (!props.isAsideOpened || props.asideDataLength === props.fullCounter) {
+          if (!props.isAsideOpened || props.asideData === "all") {
             props.setAsideOpened(!props.isAsideOpened);
           }
-          props.setAsideDataLength(props.fullCounter);
+          props.setAsideData("all");
         }}
       >
         Всего: <span>{props.fullCounter}</span>
       </h2>
       <h2
         onClick={() => {
-          if (!props.isAsideOpened || props.asideDataLength === props.sentCounter) {
+          if (!props.isAsideOpened || props.asideData === "sent") {
             props.setAsideOpened(!props.isAsideOpened);
           }
-          props.setAsideDataLength(props.sentCounter);
+          props.setAsideData("sent");
         }}
       >
         Отправлено: <span>{props.sentCounter}</span>
       </h2>
       <h2
         onClick={() => {
-          if (!props.isAsideOpened || props.asideDataLength === props.fullCounter - props.sentCounter) {
+          if (!props.isAsideOpened || props.asideData === "unsent") {
             props.setAsideOpened(!props.isAsideOpened);
           }
-          props.setAsideDataLength(props.fullCounter - props.sentCounter);
+          props.setAsideData("unsent");
         }}
       >
         Осталось: <span>{props.fullCounter - props.sentCounter}</span>
       </h2>
       <h2
         onClick={() => {
-          if (!props.isAsideOpened || props.asideDataLength === props.breakCounter) {
+          if (!props.isAsideOpened || props.asideData === "break") {
             props.setAsideOpened(!props.isAsideOpened);
           }
-          props.setAsideDataLength(props.breakCounter);
+          props.setAsideData("break");
         }}
       >
         Проблемные: <span>{props.breakCounter}</span>

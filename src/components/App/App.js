@@ -3,7 +3,6 @@ import Aside from "../Aside/Aside";
 import Header from "../Header/Header";
 import Main from "../Main/Main";
 import Footer from "../Footer/Footer";
-import { TMP_ARR } from "../../utils/consts";
 import "../../vendor/normalize.css";
 import "./App.css";
 
@@ -11,9 +10,10 @@ function App() {
   const [data, setData] = useState([]);
   const [position, setPosition] = useState(0);
   const [showedData, setShowedData] = useState([]);
-  const [asideDataLength, setAsideDataLength] = useState(NaN);
+  const [asideData, setAsideData] = useState(null);
   const [socket, setSocket] = useState(null);
   const [isAsideOpened, setAsideOpened] = useState(false);
+  const [sendedObjId, setSendedObjId] = useState("");
   const [filter, setFilter] = useState("all");
   const [delay, setDelay] = useState(5 * 60 * 1000);
 
@@ -21,7 +21,6 @@ function App() {
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:5348");
     ws.onopen = () => {
-      console.log("ws: ", ws);
       setSocket(ws);
     };
 
@@ -29,13 +28,18 @@ function App() {
       const content = JSON.parse(event.data);
 
       if (content && content.data) {
-        const arr = data.slice()
-        content.data.forEach(i => {
-          if (!arr.some(j => i.uid ===j.uid)) {
-            console.log("Received:", arr);
-            arr.push(i)
+        const arr = data.slice();
+        content.data.forEach((i) => {
+          const index = arr.findIndex((j) => i.uid === j.uid);
+
+          if (index === -1) {
+            arr.push(i);
           }
-        })
+
+          if (index >= 0 && arr[index].isEmail !== undefined) {
+            arr[index] = i;
+          }
+        });
         setData(arr);
       }
     };
@@ -51,13 +55,12 @@ function App() {
     };
   }, []);
 
-  // Функция для отправки сообщения в WebSocket
-  const sendMessage = () => {
+  // Функция для получения данных из WebSocket
+  const getContent = () => {
     if (socket) {
       socket.send(
         JSON.stringify({
           url: "unload/tg_server/get",
-          params: { data: data.filter(i => i.sent), timer: delay },
         })
       );
     } else {
@@ -65,11 +68,33 @@ function App() {
     }
   };
 
+  // Функция для отправки сообщения в WebSocket
+  const sendMessage = () => {
+    if (socket) {
+      const current = data.find((i) => i.uid === sendedObjId);
+      socket.send(
+        JSON.stringify({
+          url: "unload/tg_server/send",
+          params: { data: current },
+        })
+      );
+      setSendedObjId("");
+    } else {
+      console.error("WebSocket is not connected");
+    }
+  };
+
+  useEffect(() => {
+    if (sendedObjId !== "") {
+      sendMessage();
+    }
+  });
+
   // interval send data
   useEffect(() => {
-    sendMessage();
+    getContent();
     const interval = setInterval(() => {
-      sendMessage();
+      getContent();
     }, delay);
 
     return () => clearInterval(interval);
@@ -102,6 +127,7 @@ function App() {
           return 0;
         }
         index = array.findIndex((i) => i.uid === showedData[right].uid);
+
         if (index !== -1) {
           return index;
         }
@@ -131,13 +157,13 @@ function App() {
     setShowedData(array);
   }, [data, filter]);
 
-  function getCurrData(len) {
-    switch (len) {
-      case data.length:
+  function getCurrData(name) {
+    switch (name) {
+      case "all":
         return data;
-      case data.filter((i) => i.sent).length:
+      case "sent":
         return data.filter((i) => i.sent);
-      case data.filter((i) => !i.sent).length:
+      case "unsent":
         return data.filter((i) => !i.sent);
       default:
         return data.filter((i) => i.censored);
@@ -145,7 +171,7 @@ function App() {
   }
 
   function openFromAside(index) {
-    const arr = getCurrData(asideDataLength);
+    const arr = getCurrData(asideData);
     const cur = data.findIndex((i) => i.uid === arr[index].uid);
     setShowedData(data);
     setPosition(cur);
@@ -156,7 +182,7 @@ function App() {
     <>
       <Aside
         isAsideOpened={isAsideOpened}
-        data={getCurrData(asideDataLength)}
+        data={getCurrData(asideData)}
         openFromAside={openFromAside}
       />
       <Header
@@ -169,19 +195,20 @@ function App() {
         showedData={showedData}
         data={data}
         isAsideOpened={isAsideOpened}
-        asideDataLength={asideDataLength}
         position={position}
         setPosition={setPosition}
         setData={setData}
+        sendMessage={sendMessage}
+        setSendedObjId={setSendedObjId}
       />
       <Footer
         isAsideOpened={isAsideOpened}
-        asideDataLength={asideDataLength}
+        asideData={asideData}
         fullCounter={data.length}
         sentCounter={data.filter((i) => i.sent).length}
         breakCounter={data.filter((i) => i.censored).length}
         setAsideOpened={setAsideOpened}
-        setAsideDataLength={setAsideDataLength}
+        setAsideData={setAsideData}
       />
     </>
   );
