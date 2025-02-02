@@ -1,6 +1,6 @@
 {
   "homepage": ".",
-  "name": "applies-tg-parser",
+  "name": "woker-applies-parser",
   "version": "0.0.1",
   "private": true,
   "dependencies": {

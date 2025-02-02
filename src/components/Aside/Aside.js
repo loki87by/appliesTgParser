@@ -17,10 +17,10 @@ function Aside(props) {
           <p style={{ width: "15%", textAlign: "left" }}>{i.person.name}</p>
           <p style={{ width: "14%", textAlign: "left" }}>{i.person.phone}</p>
           <p style={{ width: "10%", textAlign: "center" }}>
-            {i.person.city ? i.person.city : "-"}
+            {i.person.city && typeof i.person.city === "string" ? i.person.city : "-"}
           </p>
           <p style={{ width: "26%", textAlign: "left" }}>
-            {i.person.link ? i.person.link : "-"}
+            {i.person.link && typeof i.person.link === "string" ? i.person.link : "-"}
           </p>
           <p style={{ width: "10%", textAlign: "left" }}>
             {i.sent ? "Отправлено" : "Не отправлено"}

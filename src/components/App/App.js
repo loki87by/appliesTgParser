@@ -10,7 +10,7 @@ function App() {
   const [data, setData] = useState([]);
   const [position, setPosition] = useState(0);
   const [showedData, setShowedData] = useState([]);
-  const [asideData, setAsideData] = useState(null);
+  const [asideData, setAsideData] = useState("all");
   const [socket, setSocket] = useState(null);
   const [isAsideOpened, setAsideOpened] = useState(false);
   const [sendedObjId, setSendedObjId] = useState("");
@@ -30,7 +30,7 @@ function App() {
       if (content && content.data) {
         const arr = data.slice();
         content.data.forEach((i) => {
-          const index = arr.findIndex((j) => i.uid === j.uid);
+          const index = arr.length === 0 ? -1 : arr.findIndex((j) => i.uid === j.uid);
 
           if (index === -1) {
             arr.push(i);

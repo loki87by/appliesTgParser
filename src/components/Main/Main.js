@@ -9,6 +9,7 @@ function Main(props) {
   const [isHovered, setIsHovered] = useState(false);
   const [clickedDirection, setClickedDirection] = useState("");
 
+  console.log(props.data)
   function toLeft(event) {
     setDirection(1);
     let newPosition;
