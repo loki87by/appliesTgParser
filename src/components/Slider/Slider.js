@@ -152,7 +152,7 @@ function Slider(props) {
                 />
               </div>
             ) : (
-              <h3>{`Надо отправить на ${i.clientContact}.`}</h3>
+              <h3>{`${i.sent ? "Отправлено" : "Надо отправить"} на ${i.clientContact}.`}</h3>
             )}
           </div>
         );
