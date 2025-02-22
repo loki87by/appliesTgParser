@@ -17,9 +17,10 @@ function App() {
   const [filter, setFilter] = useState("all");
   const [delay, setDelay] = useState(5 * 60 * 1000);
 
-  // WebSocket connect
-  useEffect(() => {
+  // Установка WebSocket соединения
+  const connectWebSocket = useCallback(() => {
     const ws = new WebSocket("ws://localhost:5348");
+
     ws.onopen = () => {
       setSocket(ws);
     };
@@ -30,7 +31,8 @@ function App() {
       if (content && content.data) {
         const arr = data.slice();
         content.data.forEach((i) => {
-          const index = arr.length === 0 ? -1 : arr.findIndex((j) => i.uid === j.uid);
+          const index =
+            arr.length === 0 ? -1 : arr.findIndex((j) => i.uid === j.uid);
 
           if (index === -1) {
             arr.push(i);
@@ -47,6 +49,17 @@ function App() {
     ws.onclose = () => {
       setSocket(null);
     };
+
+    ws.onerror = (error) => {
+      console.log("WebSocket error: ", error);
+      setTimeout(connectWebSocket, 30000);
+    };
+    return ws;
+  }, []);
+
+  // WebSocket connect
+  useEffect(() => {
+    const ws = connectWebSocket();
 
     return () => {
       if (ws) {

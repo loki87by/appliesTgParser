@@ -67,6 +67,11 @@ function Slider(props) {
     return props.clicked.some((i) => i === ind);
   }
 
+  const phoneNumberHandler = (num) => {
+    const number = num.replace(/[^0-9]/g, "");
+    return number.length >= 10 && number.length <= 12 ? `+7${number.slice(number.length === 11 ? 1 : 0)}` : number
+  }
+
   return (
     <div
       className="slider"
@@ -80,12 +85,11 @@ function Slider(props) {
               props.position === 0 && ind === 0 && "Slider-slide--first"
             }`}
             style={{
+              visibility: props.position === ind ? "visible" : 'hidden',
               background: `linear-gradient(${
                 i.info && i.info !== "" ? "var(--t-color1), " : ""
               }var(--t-color0), var(--t-color${i.censored ? "2" : "0"}))`,
-              transform: `rotateY(${
-                ind === props.position ? 0 : ind < props.position ? -60 : 60
-              }deg) translateX(-${(props.position + ind) * props.shift}${
+              transform: ` translateX(-${(props.position + ind) * props.shift}${
                 props.unit
               })`,
             }}
@@ -94,6 +98,8 @@ function Slider(props) {
             <img
               src={ok}
               alt="Отправлено"
+              style={{
+              visibility: props.position === ind ? "visible" : 'hidden'}}
               className={`null ${i.sent && "sended"}`}
             />
             <div className="Slider-slide-content">
@@ -114,7 +120,7 @@ function Slider(props) {
                 <h3 className="Slider-slide-text">{`ФИО соискателя - ${i.person.name}`}</h3>
                 <h3 className="Slider-slide-text">{`Контакты для связи${
                   i.person.phone
-                    ? ": ".concat(i.person.phone)
+                    ? ": ".concat(phoneNumberHandler(i.person.phone))
                     : " пользователь не оставил."
                 }`}</h3>
                 {i.person.link ? (

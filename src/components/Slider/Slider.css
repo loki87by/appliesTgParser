@@ -5,13 +5,6 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-  -webkit-transition: -webkit-transform 0.5s ease;
-  transition: -webkit-transform 0.5s ease;
-  -o-transition: transform 0.5s ease;
-  transition: transform 0.5s ease;
-  transition: transform 0.5s ease, -webkit-transform 0.5s ease;
 }
 
 .Slider-slide {
@@ -37,12 +30,7 @@
   -ms-flex-pack: end;
   justify-content: flex-end;
   border: 1px solid black;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
   border-radius: 5px;
-  -webkit-transition: all 0.7s ease-in-out;
-  -o-transition: all 0.7s ease-in-out;
-  transition: all 0.7s ease-in-out;
 }
 
 .Slider-slide--first {
