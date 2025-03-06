@@ -37,6 +37,10 @@
   margin-left: 25%;
 }
 
+.maybe_duplicate {
+  border: 10px dotted blue;
+}
+
 .null {
   position: absolute;
   width: 0;

@@ -51,6 +51,13 @@ function Slider(props) {
     function updateData() {
       const newData = props.data.slice();
       current = props.slides[props.position].uid;
+      let localData = localStorage.getItem("sendedIds") || [];
+
+      if (typeof localData === "string") {
+        localData = JSON.parse(localData);
+      }
+      localData.push(current);
+      localStorage.setItem("sendedIds", JSON.stringify(localData));
       const currIndex = newData.findIndex((i) => i.uid === current);
       newData[currIndex].sent = true;
       props.setData(newData);
@@ -67,11 +74,6 @@ function Slider(props) {
     return props.clicked.some((i) => i === ind);
   }
 
-  const phoneNumberHandler = (num) => {
-    const number = num.replace(/[^0-9]/g, "");
-    return number.length >= 10 && number.length <= 12 ? `+7${number.slice(number.length === 11 ? 1 : 0)}` : number
-  }
-
   return (
     <div
       className="slider"
@@ -83,9 +85,9 @@ function Slider(props) {
             key={ind}
             className={`Slider-slide ${
               props.position === 0 && ind === 0 && "Slider-slide--first"
-            }`}
+            } ${i.mdb && 'maybe_duplicate'}`}
             style={{
-              visibility: props.position === ind ? "visible" : 'hidden',
+              visibility: props.position === ind ? "visible" : "hidden",
               background: `linear-gradient(${
                 i.info && i.info !== "" ? "var(--t-color1), " : ""
               }var(--t-color0), var(--t-color${i.censored ? "2" : "0"}))`,
@@ -99,7 +101,8 @@ function Slider(props) {
               src={ok}
               alt="Отправлено"
               style={{
-              visibility: props.position === ind ? "visible" : 'hidden'}}
+                visibility: props.position === ind ? "visible" : "hidden",
+              }}
               className={`null ${i.sent && "sended"}`}
             />
             <div className="Slider-slide-content">
@@ -120,7 +123,7 @@ function Slider(props) {
                 <h3 className="Slider-slide-text">{`ФИО соискателя - ${i.person.name}`}</h3>
                 <h3 className="Slider-slide-text">{`Контакты для связи${
                   i.person.phone
-                    ? ": ".concat(phoneNumberHandler(i.person.phone))
+                    ? ": ".concat(i.person.phone)
                     : " пользователь не оставил."
                 }`}</h3>
                 {i.person.link ? (
@@ -158,7 +161,9 @@ function Slider(props) {
                 />
               </div>
             ) : (
-              <h3>{`${i.sent ? "Отправлено" : "Надо отправить"} на ${i.clientContact}.`}</h3>
+              <h3>{`${i.sent ? "Отправлено" : "Надо отправить"} на ${
+                i.clientContact
+              }.`}</h3>
             )}
           </div>
         );
