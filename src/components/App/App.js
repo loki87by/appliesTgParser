@@ -35,19 +35,18 @@ function App() {
             arr.length === 0 ? -1 : arr.findIndex((j) => i.uid === j.uid);
 
           if (index === -1) {
+            let localData = localStorage.getItem("sendedIds") || []
+            if (typeof localData === "string") {
+              localData = JSON.parse(localData);
+            }
+            if (localData.length > 0 && localData.includes(i.uid) && !i.sent) {
+              i.mbd = true;
+            }
             arr.push(i);
           }
 
           if (index >= 0 && arr[index].isEmail !== undefined) {
             arr[index] = i;
-          }
-
-          let localData = localStorage.getItem("sendedIds") || []
-          if (typeof localData === "string") {
-            localData = JSON.parse(localData);
-          }
-          if (localData.length > 0 && index >= 0 && localData.includes(i.uid) && !i.sent) {
-            arr[index].mbd = true;
           }
         });
         setData(arr);
