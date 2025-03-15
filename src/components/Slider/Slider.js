@@ -85,7 +85,7 @@ function Slider(props) {
             key={ind}
             className={`Slider-slide ${
               props.position === 0 && ind === 0 && "Slider-slide--first"
-            } ${i.mdb && 'maybe_duplicate'}`}
+            } ${i.mbd && 'maybe_duplicate'}`}
             style={{
               visibility: props.position === ind ? "visible" : "hidden",
               background: `linear-gradient(${
