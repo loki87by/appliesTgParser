@@ -13,9 +13,30 @@ function App() {
   const [asideData, setAsideData] = useState("all");
   const [socket, setSocket] = useState(null);
   const [isAsideOpened, setAsideOpened] = useState(false);
+  const [needCleanLs, setNeedCleanLs] = useState(false);
   const [sendedObjId, setSendedObjId] = useState("");
   const [filter, setFilter] = useState("all");
   const [delay, setDelay] = useState(5 * 60 * 1000);
+
+  useEffect(() => {
+    const updLsBeforeUnload = () => {
+      let localData = localStorage.getItem("sendedIds") || [];
+
+      if (typeof localData === "string") {
+        localData = JSON.parse(localData);
+      }
+
+      if (needCleanLs) {
+        localStorage.removeItem("sendedIds");
+      }
+    };
+
+    window.addEventListener("beforeunload", updLsBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", updLsBeforeUnload);
+    };
+  }, []);
 
   // Установка WebSocket соединения
   const connectWebSocket = useCallback(() => {
@@ -35,7 +56,7 @@ function App() {
             arr.length === 0 ? -1 : arr.findIndex((j) => i.uid === j.uid);
 
           if (index === -1) {
-            let localData = localStorage.getItem("sendedIds") || []
+            let localData = localStorage.getItem("sendedIds") || [];
             if (typeof localData === "string") {
               localData = JSON.parse(localData);
             }
@@ -209,7 +230,9 @@ function App() {
         filter={filter}
         setFilter={setFilter}
         delay={delay}
+        needCleanLs={needCleanLs}
         setDelay={setDelay}
+        setNeedCleanLs={setNeedCleanLs}
       />
       <Main
         showedData={showedData}

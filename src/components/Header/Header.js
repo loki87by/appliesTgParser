@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Header.css";
 
 function Header(props) {
+  const [isContextMenuShowed, showContextMenu] = useState(false);
+  const [contextMenuCoords, setContextMenuCoords] = useState([]);
+
   const delayCorrection = (arg) => {
     const timeArgs = arg.split(" ");
     let koef = 1;
@@ -12,8 +15,45 @@ function Header(props) {
     return +timeArgs[0] * koef * 60 * 1000;
   };
 
+  function setContextMenu(e) {
+    e.preventDefault();
+    setContextMenuCoords(e.clientY, e.clientX);
+    showContextMenu(true);
+  }
+
+  function toggleRange(e) {
+    const { value } = e.target;
+    if (+value) {
+      props.setNeedCleanLs(true);
+    }
+
+    showContextMenu(false);
+  }
+  // setNeedCleanLs
   return (
-    <header>
+    <header onContextMenu={setContextMenu}>
+      {isContextMenuShowed ? (
+        <article
+          style={{
+            top: `${contextMenuCoords[0]}px`,
+            left: `${contextMenuCoords[1]}px`,
+          }}
+        >
+          <input
+            type="range"
+            name="range"
+            step="1"
+            min="0"
+            max="1"
+            id="range"
+            defaultValue={+props.needCleanLs}
+            onChange={toggleRange}
+          />
+          <label htmlFor="range">Вкл/выкл очистку хранилища дубликатов</label>
+        </article>
+      ) : (
+        ""
+      )}
       <section>
         <h2>{`Режим отображения: `}</h2>
         <select
